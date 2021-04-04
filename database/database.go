@@ -43,8 +43,15 @@ func initColumns() {
 		}
 		csvReader := csv.NewReader(csvfile)
 
-		csvReader.Comma = ','
-		Arr_columns_names, _ = csvReader.Read()
+		csvReader.Comma = ';'
+		tempArr, _ := csvReader.Read()
+
+		// Headerlarda boş(yanlış) veri varsa onu eklemeyecek
+		for _, element := range tempArr {
+			if element != "" {
+				Arr_columns_names = append(Arr_columns_names, strings.TrimSpace(element))
+			}
+		}
 		*config.Columns_names = strings.Join(Arr_columns_names, ",")
 		csvfile.Close()
 	}

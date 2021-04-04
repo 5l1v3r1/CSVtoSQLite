@@ -32,8 +32,11 @@ func main() {
 				if err != nil {
 					log.Fatalf("failed to open")
 				}
+				fmt.Print(path + " <--> The file opening: ")
+				fmt.Println(info.Name())
+
 				readerCSV := csv.NewReader(file)
-				readerCSV.Comma = ','
+				readerCSV.Comma = ';'
 
 				ctx := context.Background()
 				tx, err := database.Db.BeginTx(ctx, nil)
@@ -49,21 +52,33 @@ func main() {
 						fmt.Println("An error encountered ::", err)
 
 					}
+
+					// tüm satır boş mu değilmi kontrolü
+					var isEmptyRecord bool = true
+
+					// Satırdaki veri parse edildikten sonra, sütun sayısından fazla olma ihtimaline karşı
+					record = record[:len(database.Arr_columns_names)]
+
 					s_interface := make([]interface{}, len(record))
 					for i, v := range record {
 						s_interface[i] = v
+						if v != "" {
+							isEmptyRecord = false
+						}
 					}
 
-					_, err = tx.ExecContext(ctx, database.InsertQuery, s_interface...)
-					if err != nil {
-						fmt.Println(err)
-						tx.Rollback()
-						break
+					// Okunan satırdaki tüm veriler boş değilse veritabanına ekliyor
+					if isEmptyRecord == false {
+						_, err = tx.ExecContext(ctx, database.InsertQuery, s_interface...)
+						if err != nil {
+							fmt.Print("Eror in Line 68: ")
+							fmt.Println(err)
+							tx.Rollback()
+							break
+						}
 					}
-					fmt.Println(i)
-					if i > 100000 {
-						break
-					}
+
+					// fmt.Println(i)
 				}
 
 				err = tx.Commit()

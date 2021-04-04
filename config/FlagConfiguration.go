@@ -7,7 +7,7 @@ import (
 
 var (
 	temp_root_dir      string = "testdata11"
-	temp_Seperator     string = ","
+	temp_Seperator     string = ";"
 	temp_Db_name       string = "def_database"
 	temp_Table_name    string = "def_table"
 	temp_Columns_names string = "-1"
