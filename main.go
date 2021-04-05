@@ -16,6 +16,8 @@ import (
 
 func main() {
 
+	fmt.Println("PROGRAM STARTED!")
+
 	// Getting flags
 	config.FlagParsing()
 
@@ -71,10 +73,13 @@ func main() {
 					if isEmptyRecord == false {
 						_, err = tx.ExecContext(ctx, database.InsertQuery, s_interface...)
 						if err != nil {
-							fmt.Print("Eror in Line 68: ")
+							fmt.Print("Eror in Line 74: ")
 							fmt.Println(err)
 							tx.Rollback()
-							break
+							fmt.Print("Rollback function called.")
+
+							// break
+
 						}
 					}
 
@@ -96,5 +101,8 @@ func main() {
 	if err != nil {
 		log.Println(err)
 	}
+
+	fmt.Println()
+	fmt.Println("PROGRAM FINISHED!")
 
 }
